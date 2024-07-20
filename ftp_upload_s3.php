@@ -6,32 +6,36 @@
  */
 
 /* @var $ftp_local_file string $argv[1] */
-
 /* @var $ftp_remote_file string $argv[2] */
 
+use Aws\Exception\AwsException; 
 use Aws\Exception\MultipartUploadException;
 use Aws\S3\MultipartUploader;
+use Aws\S3\S3Client;
 
 require __DIR__ . '/vendor/autoload.php';
 $conf = require __DIR__ . '/config.php';
 
-//$date = date('Ymd');
 $bucket = $conf['bucket'];
 $ftp_local_file=$argv[1];
 $ftp_remote_file=$argv[2];
 
-// S3 Client
+// Wasabi Cloud S3 connection options
 $opts = [
-    //'profile' => 'default',
-    'version' => 'latest',
+    'credentials' => [
+        'key' => $conf['credentials']['key'],
+        'secret' => $conf['credentials']['secret'],
+    ],
+    'endpoint' => $conf['endpoint'],
     'region' => $conf['region'],
-    'credentials' => $conf['credentials'],
+    'version' => $conf['version'],
+    'use_path_style_endpoint' => $conf['use_path_style_endpoint'],
 ];
 if (!empty($conf['endpoint'])) {
     $opts['endpoint'] = $conf['endpoint'];
 }
 
-$client = new Aws\S3\S3Client($opts);
+$client = new S3Client($opts);
 
 // check bucket exist
 $exist = false;
@@ -44,80 +48,9 @@ if ($buckets) {
     }
 }
 
-
-// Create Bucket
+// If bucket is not existing exit
 if (!$exist) {
-    $client->createBucket([
-        'Bucket' => $bucket,
-        'LocationConstraint' => $conf['region'],
-    ]);
-
-    // Poll the bucket until it is accessible
-    $client->waitUntil('BucketExists', [
-        'Bucket' => $bucket
-    ]);
-
-    // add Lifecycle
-    $client->putBucketLifecycleConfiguration(
-        [
-            'Bucket' => $bucket, // REQUIRED
-            'LifecycleConfiguration' => [
-                'Rules' => [ // REQUIRED
-                    [
-                        'ID' => 'AutoDelete',
-                        'AbortIncompleteMultipartUpload' => [
-                            'DaysAfterInitiation' => 1,
-                        ],
-                        'Expiration' => [
-                            'Days' => $conf['expiration'],
-                        ],
-                        'Status' => 'Enabled',
-                        'Prefix' => ''
-                    ],
-                ],
-            ],
-        ]
-    );
-}
-
-// check and apply lifecycle
-$hasLifeCycle = false;
-try {
-    $r = $client->getBucketLifecycle(['Bucket' => $bucket]);
-    $rules = $r->get('Rules');
-    foreach ($rules as $rule) {
-        if ($rule['ID'] == 'AutoDelete') {
-            $hasLifeCycle = true;
-        }
-    }
-} catch (\Aws\S3\Exception\S3Exception $e) {
-
-}
-if (!$hasLifeCycle) {
-    // Config auto delete
-    $client->putBucketLifecycleConfiguration(
-        [
-            'Bucket' => $bucket, // REQUIRED
-            'LifecycleConfiguration' => [
-                'Rules' => [ // REQUIRED
-                    [
-                        'ID' => 'AutoDelete',
-                        'AbortIncompleteMultipartUpload' => [
-                            'DaysAfterInitiation' => 1,
-                        ],
-                        'Expiration' => [
-                            'Days' => $conf['expiration'],
-                        ],
-                        'Status' => 'Enabled',
-                        'Prefix' => ''
-                    ],
-                ],
-            ],
-        ]
-    );
-    echo "adding lifecycle";
-} else {
-    echo "lifecycle already added.";
+    exit();
 }
 
 // Upload
