@@ -7,11 +7,13 @@
 
 return [
     'credentials' => [
-        'key' => 'YOUR_AWS_KEY',
-        'secret' => 'YOUR_AWS_SECRET',
+        'key' => 'YOUR_WASABI_KEY',
+        'secret' => 'YOUR_WASABI_SECRET',
     ],
-    'region' => 'us-east-1',
-    'bucket'=>'you-bucket-name',
-    'expiration'=>3,
-	//'endpoint' => 'https://sfo2.digitaloceanspaces.com', //enable this for digitalocean space	
+    'region' => 'YOUR_WASABI_REGION', // eu-central-1
+    'expiration' => 30,
+    'endpoint' => 'YOUR_WASABI_ENDPOINT', // https://s3.eu-central-1.wasabisys.com 
+    'version' => 'latest',
+    'use_path_style_endpoint' => true,
+    'bucket'=>'YOUR_WASABI_BUCKET',
 ];
