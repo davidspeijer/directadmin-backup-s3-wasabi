@@ -1,18 +1,16 @@
 # directadmin-s3-backup
 
-DirectAdmin S3 Backup
+DirectAdmin S3 Backup based on https://github.com/powerkernel/directadmin-s3-backup
 
 ## Features
 
-- Auto backup upload to AWS S3
-- Auto Create S3 Bucket
-- Auto delete old backups after X day(s)
+- Auto backup upload to Wasabi Cloud S3
 
 ## Installation
 
 ```bash
 mkdir -p /home/admin/tools/
-wget -O /home/admin/tools/s3backup.zip https://github.com/powerkernel/directadmin-s3-backup/archive/master.zip
+wget -O /home/admin/tools/s3backup.zip https://github.com/davidspeijer/directadmin-backup-s3-wasabi/archive/master.zip
 cd /home/admin/tools
 unzip s3backup.zip
 mv directadmin-s3-backup-master directadmin-s3-backup
