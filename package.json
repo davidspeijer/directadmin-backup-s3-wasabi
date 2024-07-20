@@ -1,14 +1,14 @@
 {
-  "name": "directadmin-s3-backup",
+  "name": "directadmin-backup-s3-wasabi",
   "version": "1.0.0",
-  "description": "DirectAdmin S3 Backup",
+  "description": "DirectAdmin S3 Backup for Wasabi Cloud",
   "main": "index.js",
   "scripts": {
     "release": "npx standard-version && git push --follow-tags origin main"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/powerkernel/directadmin-s3-backup.git"
+    "url": "git+https://github.com/davidspeijer/directadmin-backup-s3-wasabi.git"
   },
   "keywords": [],
   "author": {
